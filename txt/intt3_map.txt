@@ -1,0 +1,21 @@
+#felix_ch       ROC_port        Ladder
+0   A1  B0L109S
+1   B1  B0L009S
+2   C1  B0L110S
+3   A2  B1L112S
+4   B3  B1L012S
+5   C2  B1L113S
+6   D1  B1L013S
+
+7   A1  B0L010S
+8   B1  B0L111S
+9   C1  B0L011S
+10   A2  B1L114S
+11   B3  B1L014S
+12   C3  B1L115S
+13   D2  B1L015S
+
+# File : /home/inttdev/map/RC-6S_7S_map.txt
+# Time : 2023-03-23 01:57:02.508902
+# ROC1 : RC-6S(NE4)
+# ROC2 : RC-7S(NW5)

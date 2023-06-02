@@ -1,0 +1,21 @@
+#felix_ch       ROC_port        Ladder 
+0	B3	B0L109N
+1	C1	B0L009N
+2	B1	B0L110N
+3	D1	B1L112N
+4	C2	B1L012N
+5	B2	B1L113N
+6	A1	B1L013N
+
+7	B2	B0L010N
+8	C2	B0L111N
+9	B1	 B0L011N 
+10	D2	 B1L114N 
+11	C3	B1L014N
+12	B3	B1L115N
+13	A1	B1L015N
+
+# source : ver20230306_INTT_sort_box_mapping.XLSX
+# log 1 : made by CW_shih, time : 2023-03-26, 18:13
+# ROC1 : RC-6N
+# ROC2 : RC-7N

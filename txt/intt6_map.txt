@@ -1,0 +1,22 @@
+#felix_ch       ROC_port        Ladder 
+0	A1	B0L106N
+1	C3	B0L006N
+2	B2	B0L107N
+3	D1	B1L108N
+4	C2	B1L008N
+5	B3	B1L109N
+6	A2	B1L009N
+
+7	D1	B0L007N
+8	C3	B0L108N
+9	A2	B0L008N
+10	D2	 B1L110N 
+11	C2	B1L010N
+12	B3	B1L111N
+13	A1	 B1L011N 
+
+# source : ver20230306_INTT_sort_box_mapping.XLSX
+# log 1 : made by CW_shih, time : 2023-03-26, 18:12
+# ROC1 : RC-4N
+# ROC2 : RC-5N
+# map correct, felix channel 3, D2 should be D1, confirmed by eyes
