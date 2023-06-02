@@ -59,11 +59,19 @@ int felix_autogen::read()
 			sscanf(buff, "B%dL%d", &onl.lyr, &onl.ldr);
 			onl.lyr = 2 * onl.lyr + onl.ldr / 100;
 			onl.ldr %= 100;
+			onl.arm = flx.svr / 4;
 
 			flx_to_onl[flx] = onl;
 			onl_to_flx[onl] = flx;
 
-			if(verbose)printf("svr: %d chn: %02d => lyr: %d ldr: %02d\n", flx.svr, flx.chn, onl.lyr, onl.ldr);
+			if(verbose)
+			{
+				printf("%s\n", buff);
+				printf("lyr: %d ldr: %02d arm: %d\n", onl.lyr, onl.ldr, onl.arm);
+				printf("svr: %d chn: %02d => lyr: %d ldr: %02d arm: %d\n", flx.svr, flx.chn, flx_to_onl[flx].lyr, flx_to_onl[flx].ldr, flx_to_onl[flx].arm);
+				printf("lyr: %d ldr: %02d arm: %d => svr: %d chn: %02d\n", onl.lyr, onl.ldr, onl.arm, onl_to_flx[onl].svr, onl_to_flx[onl].chn);
+				printf("\n");
+			}
 		}
 
 		file.close();
@@ -87,13 +95,13 @@ int felix_autogen::write()
 	snprintf(buff, buff_size, output_file.c_str(), "cc");
 	file.open(buff, std::ios::out | std::ios::trunc);
 
-	file << "#include \"InttMapping.h\"" << std::endl;
+	file << "#include \"InttFelixMap.h\"" << std::endl;
 	file << std::endl;
 	file << "int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::Online_s& onl)" << std::endl;
 	file << "{" << std::endl;
 	for(flx_itr = flx_to_onl.begin(); flx_itr != flx_to_onl.end(); ++flx_itr)
 	{
-		snprintf(buff, buff_size, "\tif(raw.felix_server == %d && raw.felix_channel == %2d){onl.lyr = %d;onl.ldr = %2d;return 0;}", flx_itr->first.svr, flx_itr->first.chn, flx_itr->second.lyr, flx_itr->second.ldr);
+		snprintf(buff, buff_size, "\tif(raw.felix_server == %d && raw.felix_channel == %2d){onl.lyr = %d;onl.ldr = %2d;onl.arm = %d;return 0;}", flx_itr->first.svr, flx_itr->first.chn, flx_itr->second.lyr, flx_itr->second.ldr, flx_itr->second.arm);
 		file << buff << std::endl;
 	}
 	file << std::endl;
@@ -105,7 +113,7 @@ int felix_autogen::write()
 	file << "{" << std::endl;
 	for(onl_itr = onl_to_flx.begin(); onl_itr != onl_to_flx.end(); ++onl_itr)
 	{
-		snprintf(buff, buff_size, "\tif(onl.lyr == %d && onl.ldr == %2d){raw.felix_server = %d;raw.felix_channel = %2d;return 0;}", onl_itr->first.lyr, onl_itr->first.ldr, onl_itr->second.svr, onl_itr->second.chn);
+		snprintf(buff, buff_size, "\tif(onl.lyr == %d && onl.ldr == %2d && onl.arm == %d){raw.felix_server = %d;raw.felix_channel = %2d;return 0;}", onl_itr->first.lyr, onl_itr->first.ldr, onl_itr->first.arm, onl_itr->second.svr, onl_itr->second.chn);
 		file << buff << std::endl;
 	}
 	file << std::endl;
@@ -119,7 +127,7 @@ int felix_autogen::write()
 	file << "#ifndef INTT_FELIX_MAP_H" << std::endl;
 	file << "#define INTT_FELIX_MAP_H" << std::endl;
 	file << std::endl;
-	file << "#include \"InttFelixMapping.h\"" << std::endl;
+	file << "#include \"InttMapping.h\"" << std::endl;
 	file << std::endl;
 	file << "namespace InttFelix" << std::endl;
 	file << "{" << std::endl;
@@ -147,8 +155,9 @@ bool operator!=(struct felix_autogen::Flx_s const& lhs, struct felix_autogen::Fl
 bool operator<(struct felix_autogen::Flx_s const& lhs, struct felix_autogen::Flx_s const& rhs)
 {
 	if(lhs.svr != rhs.svr)return lhs.svr < rhs.svr;
+	if(lhs.chn != rhs.chn)return lhs.chn < rhs.chn;
 
-	return lhs.chn < rhs.chn;
+	return false;
 }
 bool operator>(struct felix_autogen::Flx_s const& lhs, struct felix_autogen::Flx_s const& rhs){return rhs < lhs;}
 bool operator<=(struct felix_autogen::Flx_s const& lhs, struct felix_autogen::Flx_s const& rhs){return !(lhs > rhs);}
@@ -159,6 +168,7 @@ bool operator==(struct felix_autogen::Onl_s const& lhs, struct felix_autogen::On
 {
 	if(lhs.lyr != rhs.lyr)return false;
 	if(lhs.ldr != rhs.ldr)return false;
+	if(lhs.arm != rhs.arm)return false;
 
 	return true;
 }
@@ -167,8 +177,10 @@ bool operator!=(struct felix_autogen::Onl_s const& lhs, struct felix_autogen::On
 bool operator<(struct felix_autogen::Onl_s const& lhs, struct felix_autogen::Onl_s const& rhs)
 {
 	if(lhs.lyr != rhs.lyr)return lhs.lyr < rhs.lyr;
+	if(lhs.ldr != rhs.ldr)return lhs.ldr < rhs.ldr;
+	if(lhs.arm != rhs.arm)return lhs.arm < rhs.arm;
 
-	return lhs.ldr < rhs.ldr;
+	return false;
 }
 bool operator>(struct felix_autogen::Onl_s const& lhs, struct felix_autogen::Onl_s const& rhs){return rhs < lhs;}
 bool operator<=(struct felix_autogen::Onl_s const& lhs, struct felix_autogen::Onl_s const& rhs){return !(lhs > rhs);}

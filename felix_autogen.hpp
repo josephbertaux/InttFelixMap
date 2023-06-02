@@ -21,9 +21,10 @@ public:
 	{
 		int lyr = 0;
 		int ldr = 0;
+		int arm = 0;
 	};
 
-	bool verbose = false;
+	bool verbose = true;
 	std::string file_format = "txt/intt%d_map.txt";
 	std::string output_file = "generated_code/InttFelixMap.%s";
 
