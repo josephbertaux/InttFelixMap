@@ -23,7 +23,7 @@ public:
 		int ldr = 0;
 	};
 
-	bool verbose = true;
+	bool verbose = false;
 	std::string file_format = "txt/intt%d_map.txt";
 	std::string output_file = "generated_code/InttFelixMap.%s";
 

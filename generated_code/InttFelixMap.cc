@@ -1,4 +1,4 @@
-#include "InttFelixMap.h"
+#include "InttMapping.h"
 
 int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::Online_s& onl)
 {

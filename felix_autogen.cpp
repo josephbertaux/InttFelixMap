@@ -87,7 +87,7 @@ int felix_autogen::write()
 	snprintf(buff, buff_size, output_file.c_str(), "cc");
 	file.open(buff, std::ios::out | std::ios::trunc);
 
-	file << "#include \"InttFelixMap.h\"" << std::endl;
+	file << "#include \"InttMapping.h\"" << std::endl;
 	file << std::endl;
 	file << "int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::Online_s& onl)" << std::endl;
 	file << "{" << std::endl;
