@@ -3,7 +3,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 {
 	switch(raw.felix_server) {
 		case  0:
-		switch(raw.felix_module) {
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  3;onl.ldr =  1;onl.arm =  0;return 0;
 			case  1:
@@ -36,6 +36,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  1:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  3;onl.ldr =  5;onl.arm =  0;return 0;
 			case  1:
@@ -68,6 +69,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  2:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  1;onl.ldr =  6;onl.arm =  0;return 0;
 			case  1:
@@ -100,6 +102,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  3:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  1;onl.ldr =  9;onl.arm =  0;return 0;
 			case  1:
@@ -132,6 +135,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  4:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  3;onl.ldr =  1;onl.arm =  1;return 0;
 			case  1:
@@ -164,6 +168,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  5:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  0;onl.ldr =  3;onl.arm =  1;return 0;
 			case  1:
@@ -196,6 +201,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  6:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  1;onl.ldr =  6;onl.arm =  1;return 0;
 			case  1:
@@ -228,6 +234,7 @@ int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::O
 			return 1;
 		}
 		case  7:
+		switch(raw.felix_channel) {
 			case  0:
 			onl.lyr =  1;onl.ldr =  9;onl.arm =  1;return 0;
 			case  1:

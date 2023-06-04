@@ -110,7 +110,7 @@ int felix_autogen::write()
 
 		if(flx_itr->first.chn != prv_chn)
 		{
-			if(prv_chn == -1)fprintf(file, "\t\tswitch(raw.felix_module) {\n");
+			if(prv_chn == -1)fprintf(file, "\t\tswitch(raw.felix_channel) {\n");
 			fprintf(file, "\t\t\tcase %2d:\n", flx_itr->first.chn);
 			prv_chn = flx_itr->first.chn;
 		}
@@ -121,11 +121,13 @@ int felix_autogen::write()
 		fprintf(file, "\t\t\tdefault:\n");
 		fprintf(file, "\t\t\treturn 1;\n");
 		fprintf(file, "\t\t}\n");
+		prv_chn = -1;
 
 		if(prv_svr != 7)continue;
 		fprintf(file, "\t\tdefault:\n");
 		fprintf(file, "\t\treturn 1;\n");
 		fprintf(file, "\t}\n");
+		prv_svr = -1;
 	}
 	fprintf(file, "\n");
 	fprintf(file, "\treturn 1;\n");
