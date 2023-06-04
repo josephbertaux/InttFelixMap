@@ -1,7 +1,7 @@
 #ifndef INTT_FELIX_MAP_H
 #define INTT_FELIX_MAP_H
 
-#include "InttFelixMapping.h"
+#include "InttMapping.h"
 
 namespace InttFelix
 {

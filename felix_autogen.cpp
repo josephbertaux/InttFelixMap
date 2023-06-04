@@ -85,59 +85,126 @@ int felix_autogen::write()
 	std::size_t buff_size = 256;
 	char buff[buff_size];
 
-	std::size_t pos;
-	std::string line;
-	std::fstream file;
+	FILE* file = nullptr;
 
 	std::map<struct Flx_s, struct Onl_s>::iterator flx_itr;
 	std::map<struct Onl_s, struct Flx_s>::iterator onl_itr;
 
 	snprintf(buff, buff_size, output_file.c_str(), "cc");
-	file.open(buff, std::ios::out | std::ios::trunc);
+	file = fopen(buff, "w");
 
-	file << "#include \"InttFelixMap.h\"" << std::endl;
-	file << std::endl;
-	file << "int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::Online_s& onl)" << std::endl;
-	file << "{" << std::endl;
+	fprintf(file, "#include \"InttFelixMap.h\"\n");
+	fprintf(file, "int InttFelix::RawDataToOnline(struct Intt::RawData_s const& raw, struct Intt::Online_s& onl)\n");
+	fprintf(file, "{\n");
+
+	int prv_svr = -1;
+	int prv_chn = -1;
 	for(flx_itr = flx_to_onl.begin(); flx_itr != flx_to_onl.end(); ++flx_itr)
 	{
-		snprintf(buff, buff_size, "\tif(raw.felix_server == %d && raw.felix_channel == %2d){onl.lyr = %d;onl.ldr = %2d;onl.arm = %d;return 0;}", flx_itr->first.svr, flx_itr->first.chn, flx_itr->second.lyr, flx_itr->second.ldr, flx_itr->second.arm);
-		file << buff << std::endl;
-	}
-	file << std::endl;
-	file << "\treturn 1;" << std::endl;
-	file << "}" << std::endl;
-	file << std::endl;
+		if(flx_itr->first.svr != prv_svr)
+		{
+			if(prv_svr == -1)fprintf(file, "\tswitch(raw.felix_server) {\n");
+			fprintf(file, "\t\tcase %2d:\n", flx_itr->first.svr);
+			prv_svr = flx_itr->first.svr;
+		}
 
-	file << "int InttFelix::OnlineToRawData(struct Intt::Online_s const& onl, struct Intt::RawData_s& raw)" << std::endl;
-	file << "{" << std::endl;
+		if(flx_itr->first.chn != prv_chn)
+		{
+			if(prv_chn == -1)fprintf(file, "\t\tswitch(raw.felix_module) {\n");
+			fprintf(file, "\t\t\tcase %2d:\n", flx_itr->first.chn);
+			prv_chn = flx_itr->first.chn;
+		}
+
+		fprintf(file, "\t\t\tonl.lyr = %2d;onl.ldr = %2d;onl.arm = %2d;return 0;\n", flx_itr->second.lyr, flx_itr->second.ldr, flx_itr->second.arm);
+
+		if(prv_chn != 13)continue;
+		fprintf(file, "\t\t\tdefault:\n");
+		fprintf(file, "\t\t\treturn 1;\n");
+		fprintf(file, "\t\t}\n");
+
+		if(prv_svr != 7)continue;
+		fprintf(file, "\t\tdefault:\n");
+		fprintf(file, "\t\treturn 1;\n");
+		fprintf(file, "\t}\n");
+	}
+	fprintf(file, "\n");
+	fprintf(file, "\treturn 1;\n");
+	fprintf(file, "}\n");
+
+	fprintf(file, "\n");
+
+	fprintf(file, "int InttFelix::OnlineToRawData(struct Intt::Online_s const& onl, struct Intt::RawData_s& raw)\n");
+	fprintf(file, "{\n");
+
+	int prv_lyr = -1;
+	int prv_ldr = -1;
+	int prv_arm = -1;
 	for(onl_itr = onl_to_flx.begin(); onl_itr != onl_to_flx.end(); ++onl_itr)
 	{
-		snprintf(buff, buff_size, "\tif(onl.lyr == %d && onl.ldr == %2d && onl.arm == %d){raw.felix_server = %d;raw.felix_channel = %2d;return 0;}", onl_itr->first.lyr, onl_itr->first.ldr, onl_itr->first.arm, onl_itr->second.svr, onl_itr->second.chn);
-		file << buff << std::endl;
+		if(onl_itr->first.lyr != prv_lyr)
+		{
+			if(prv_lyr == -1)fprintf(file, "\tswitch(onl.lyr) {\n");
+			fprintf(file, "\t\tcase %2d:\n", onl_itr->first.lyr);
+			prv_lyr = onl_itr->first.lyr;
+		}
+
+		if(onl_itr->first.ldr != prv_ldr)
+		{
+			if(prv_ldr == -1)fprintf(file, "\t\tswitch(onl.ldr) {\n");
+			fprintf(file, "\t\t\tcase %2d:\n", onl_itr->first.ldr);
+			prv_ldr = onl_itr->first.ldr;
+		}
+
+		if(onl_itr->first.arm != prv_arm)
+		{
+			if(prv_arm == -1)fprintf(file, "\t\t\tswitch(onl.arm) {\n");
+			fprintf(file, "\t\t\t\tcase %2d:\n", onl_itr->first.arm);
+			prv_arm = onl_itr->first.arm;
+		}
+
+		fprintf(file, "\t\t\t\traw.felix_server = %2d;raw.felix_channel = %2d;return 0;\n", onl_itr->second.svr, onl_itr->second.chn);
+
+		if(prv_arm != 1)continue;
+		fprintf(file, "\t\t\t\tdefault:\n");
+		fprintf(file, "\t\t\t\treturn 1;\n");
+		fprintf(file, "\t\t\t}\n");
+		prv_arm = -1;
+
+		if(prv_ldr != ((prv_lyr < 2) ? 11 : 15))continue;
+		fprintf(file, "\t\t\tdefault:\n");
+		fprintf(file, "\t\t\treturn 1;\n");
+		fprintf(file, "\t\t}\n");
+		prv_ldr = -1;
+
+		if(prv_lyr != 3)continue;
+		fprintf(file, "\t\tdefault:\n");
+		fprintf(file, "\t\treturn 1;\n");
+		fprintf(file, "\t}\n");
+		prv_lyr = -1;
 	}
-	file << std::endl;
-	file << "\treturn 1;" << std::endl;
-	file << "}" << std::endl;
-	file.close();
+	fprintf(file, "\n");
+	fprintf(file, "\treturn 1;\n");
+	fprintf(file, "}");
+
+	fclose(file);
 
 	snprintf(buff, buff_size, output_file.c_str(), "h");
-	file.open(buff, std::ios::out | std::ios::trunc);
+	file = fopen(buff, "w");
 
-	file << "#ifndef INTT_FELIX_MAP_H" << std::endl;
-	file << "#define INTT_FELIX_MAP_H" << std::endl;
-	file << std::endl;
-	file << "#include \"InttMapping.h\"" << std::endl;
-	file << std::endl;
-	file << "namespace InttFelix" << std::endl;
-	file << "{" << std::endl;
-	file << "\tint RawDataToOnline(struct Intt::RawData_s const&, struct Intt::Online_s&);" << std::endl;
-	file << "\tint OnlineToRawData(struct Intt::Online_s const&, struct Intt::RawData_s&);" << std::endl;
-	file << "};" << std::endl;
-	file << std::endl;
-	file << "#endif//INTT_FELIX_MAP_H" << std::endl;
+	fprintf(file, "#ifndef INTT_FELIX_MAP_H\n");
+	fprintf(file, "#define INTT_FELIX_MAP_H\n");
+	fprintf(file, "\n");
+	fprintf(file, "#include \"InttMapping.h\"\n");
+	fprintf(file, "\n");
+	fprintf(file, "namespace InttFelix\n");
+	fprintf(file, "{\n");
+	fprintf(file, "\tint RawDataToOnline(struct Intt::RawData_s const&, struct Intt::Online_s&);\n");
+	fprintf(file, "\tint OnlineToRawData(struct Intt::Online_s const&, struct Intt::RawData_s&);\n");
+	fprintf(file, "};\n");
+	fprintf(file, "\n");
+	fprintf(file, "#endif//INTT_FELIX_MAP_H");
 
-	file.close();
+	fclose(file);
 
 	return 0;
 }
